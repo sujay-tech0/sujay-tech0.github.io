@@ -9,18 +9,31 @@ const player = document.getElementById('player');
 const status = document.getElementById('status');
 const keyEls = document.querySelectorAll('.key');
 
+console.log('Audio mapper loaded!');
+console.log('Audio map:', audioMap);
+console.log('Player element:', player);
+console.log('Status element:', status);
+console.log('Key elements:', keyEls);
+
 // Function to play audio for a given key
 async function playForKey(key) {
+  console.log('Playing key:', key);
+  
   const audioFile = audioMap[key];
   const keyEl = document.querySelector(`.key[data-key="${key}"]`);
   
+  console.log('Audio file:', audioFile);
+  console.log('Key element:', keyEl);
+  
   if (!audioFile) {
     status.textContent = '❌ No sound mapped to that key';
+    console.error('No audio file mapped for key:', key);
     return;
   }
 
   try {
     status.textContent = '⏳ Loading...';
+    console.log('Setting player source to:', audioFile);
     player.src = audioFile;
     
     // Add visual feedback
@@ -28,8 +41,10 @@ async function playForKey(key) {
       keyEl.classList.add('active');
     }
     
+    console.log('Attempting to play audio...');
     await player.play();
     status.textContent = `▶️ Playing sound for key ${key}`;
+    console.log('Audio playing successfully!');
     
     // Remove visual feedback after a short delay
     if (keyEl) {
@@ -46,6 +61,7 @@ async function playForKey(key) {
 
 // Listen for keyboard input (1 and 2 keys)
 document.addEventListener('keydown', (e) => {
+  console.log('Key pressed:', e.key);
   if (e.key === '1' || e.key === '2') {
     playForKey(e.key);
   }
@@ -54,9 +70,9 @@ document.addEventListener('keydown', (e) => {
 // Listen for button clicks
 keyEls.forEach(el => {
   el.addEventListener('click', () => {
+    console.log('Button clicked:', el.dataset.key);
     playForKey(el.dataset.key);
   });
 });
 
-// Optional: Log initialization
-console.log('Audio mapper loaded. Press 1 or 2 or click the buttons to play sounds.');
+console.log('Audio mapper initialized. Press 1 or 2 or click the buttons to play sounds.');
