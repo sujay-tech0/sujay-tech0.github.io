@@ -1,13 +1,14 @@
 // Audio file mapping configuration
 const audioMap = {
   '1': 'magic-intro.wav',
-  '2': 'trumpet-fanfare.wav'
+  '2': '829855__silverillusionist__horror-sting-slide-down-bass-strings.wav',
+  '3': 'Fahh Sound Effect.mp3'
 };
 
 // Get DOM elements
 const player = document.getElementById('player');
 const status = document.getElementById('status');
-const keyEls = document.querySelectorAll('.key');
+const keyEls = document.querySelectorAll('.sound-button');
 
 console.log('Audio mapper loaded!');
 console.log('Audio map:', audioMap);
@@ -20,7 +21,7 @@ async function playForKey(key) {
   console.log('Playing key:', key);
   
   const audioFile = audioMap[key];
-  const keyEl = document.querySelector(`.key[data-key="${key}"]`);
+  const keyEl = document.querySelector(`.sound-button[data-key="${key}"]`);
   
   console.log('Audio file:', audioFile);
   console.log('Key element:', keyEl);
@@ -59,10 +60,10 @@ async function playForKey(key) {
   }
 }
 
-// Listen for keyboard input (1 and 2 keys)
+// Listen for keyboard input (1, 2, and 3 keys)
 document.addEventListener('keydown', (e) => {
   console.log('Key pressed:', e.key);
-  if (e.key === '1' || e.key === '2') {
+  if (e.key === '1' || e.key === '2' || e.key === '3') {
     playForKey(e.key);
   }
 });
@@ -75,4 +76,4 @@ keyEls.forEach(el => {
   });
 });
 
-console.log('Audio mapper initialized. Press 1 or 2 or click the buttons to play sounds.');
+console.log('Audio mapper initialized. Press 1, 2, or 3 or click the buttons to play sounds.');
