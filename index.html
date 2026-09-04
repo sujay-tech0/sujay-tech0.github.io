@@ -47,7 +47,7 @@
 <body>
   <div class="card">
     <h1>🎵 Press 1 or 2</h1>
-    <p class="sub">Or tap a button. Music plays via the backend-mapped audio files.</p>
+    <p class="sub">Use keyboard or click buttons to play sounds</p>
     <div class="keys">
       <div class="key" data-key="1">1</div>
       <div class="key" data-key="2">2</div>
@@ -57,44 +57,6 @@
 
   <audio id="player"></audio>
 
-  <script>
-    const player = document.getElementById('player');
-    const status = document.getElementById('status');
-    const keyEls = document.querySelectorAll('.key');
-
-    async function playForKey(key) {
-      const keyEl = document.querySelector(`.key[data-key="${key}"]`);
-      try {
-        status.textContent = 'Loading...';
-        const res = await fetch(`/api/sound/${key}`);
-        if (!res.ok) {
-          status.textContent = 'No sound mapped to that key';
-          return;
-        }
-        const data = await res.json();
-        player.src = data.file;
-        await player.play();
-        status.textContent = `Playing sound for key ${key}`;
-
-        if (keyEl) {
-          keyEl.classList.add('active');
-          setTimeout(() => keyEl.classList.remove('active'), 150);
-        }
-      } catch (err) {
-        status.textContent = 'Could not play sound (click the page once first).';
-        console.error(err);
-      }
-    }
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === '1' || e.key === '2') {
-        playForKey(e.key);
-      }
-    });
-
-    keyEls.forEach(el => {
-      el.addEventListener('click', () => playForKey(el.dataset.key));
-    });
-  </script>
+  <script src="audio-mapper.js"></script>
 </body>
 </html>
