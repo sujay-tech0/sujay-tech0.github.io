@@ -1,7 +1,7 @@
 // Audio file mapping configuration
 const audioMap = {
-  '1': 'magic-intro.wav',
-  '2': '829855__silverillusionist__horror-sting-slide-down-bass-strings.wav',
+  '1': '829855__silverillusionist__horror-sting-slide-down-bass-strings.wav',
+  '2': 'trumpet-fanfare.wav',
   '3': 'Fahh Sound Effect.mp3'
 };
 
