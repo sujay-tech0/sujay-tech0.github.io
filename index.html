@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Press 1 or 2 for Music</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e1b4b, #4c1d95, #0f172a);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #f5f3ff;
+  }
+  .card {
+    text-align: center;
+    padding: 48px 56px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+  h1 { margin: 0 0 8px; font-size: 1.8rem; }
+  p.sub { margin: 0 0 32px; opacity: 0.7; }
+  .keys { display: flex; gap: 24px; justify-content: center; margin-bottom: 24px; }
+  .key {
+    width: 90px; height: 90px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem; font-weight: 700;
+    background: rgba(255,255,255,0.08);
+    border: 2px solid rgba(255,255,255,0.25);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.08s ease, background 0.2s ease;
+    user-select: none;
+  }
+  .key:hover { background: rgba(255,255,255,0.16); }
+  .key.active { transform: scale(0.92); background: #7c3aed; border-color: #a78bfa; }
+  #status { min-height: 24px; opacity: 0.85; font-size: 0.95rem; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <h1>🎵 Press 1 or 2</h1>
+    <p class="sub">Or tap a button. Music plays via the backend-mapped audio files.</p>
+    <div class="keys">
+      <div class="key" data-key="1">1</div>
+      <div class="key" data-key="2">2</div>
+    </div>
+    <div id="status">Ready</div>
+  </div>
+
+  <audio id="player"></audio>
+
+  <script>
+    const player = document.getElementById('player');
+    const status = document.getElementById('status');
+    const keyEls = document.querySelectorAll('.key');
+
+    async function playForKey(key) {
+      const keyEl = document.querySelector(`.key[data-key="${key}"]`);
+      try {
+        status.textContent = 'Loading...';
+        const res = await fetch(`/api/sound/${key}`);
+        if (!res.ok) {
+          status.textContent = 'No sound mapped to that key';
+          return;
+        }
+        const data = await res.json();
+        player.src = data.file;
+        await player.play();
+        status.textContent = `Playing sound for key ${key}`;
+
+        if (keyEl) {
+          keyEl.classList.add('active');
+          setTimeout(() => keyEl.classList.remove('active'), 150);
+        }
+      } catch (err) {
+        status.textContent = 'Could not play sound (click the page once first).';
+        console.error(err);
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === '1' || e.key === '2') {
+        playForKey(e.key);
+      }
+    });
+
+    keyEls.forEach(el => {
+      el.addEventListener('click', () => playForKey(el.dataset.key));
+    });
+  </script>
+</body>
+</html>
