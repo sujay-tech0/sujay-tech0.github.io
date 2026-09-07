@@ -139,7 +139,8 @@ async function playForKey(key) {
 
     status.textContent = '⏳ Loading...';
     console.log('Setting player source to:', audioFile);
-    player.src = audioFile;
+    // encode URI to handle spaces and special characters in filenames
+    player.src = encodeURI(audioFile);
     
     // Add visual feedback
     if (keyEl) {
