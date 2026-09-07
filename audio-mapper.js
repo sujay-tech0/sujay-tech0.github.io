@@ -3,7 +3,7 @@ const audioMap = {
   '1': '829855__silverillusionist__horror-sting-slide-down-bass-strings.wav',
   '2': 'trumpet-fanfare.wav',
   '3': 'Fahh Sound Effect.mp3',
-  '4': '',
+  '4': 'bro-what-the-hell-bro (1).wav',
   '5': '',
   '6': ''
 };
