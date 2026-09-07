@@ -3,8 +3,8 @@ const audioMap = {
   '1': '829855__silverillusionist__horror-sting-slide-down-bass-strings.wav',
   '2': 'trumpet-fanfare.wav',
   '3': 'Fahh Sound Effect.mp3',
-  // removed space after the 2nd "bro" in filename per request
-  '4': 'bro-what-the-hell-bro(1).wav',
+  // use the actual filename present in the repo (contains a space)
+  '4': 'bro-what-the-hell-bro (1).wav',
   // mapped high-energy funky music to key 5
   '5': 'high-energy-funky-beat-with-horns-and-bass-lively-74490ea2af474e98b5636e7629_8Tr900HM.mp3',
   '6': ''
