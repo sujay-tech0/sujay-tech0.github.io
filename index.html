@@ -1,448 +1,109 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-<meta http-equiv="Pragma" content="no-cache" />
-<meta http-equiv="Expires" content="0" />
-<title>🎵 Music Soundboard</title>
-<style>
-  * { 
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box; 
-  }
-
-  :root {
-    --primary: #667eea;
-    --secondary: #764ba2;
-    --light: #f0f0f0;
-    --dark: #1a1a2e;
-    --accent: #ff006e;
-  }
-
-  body {
-    min-height: 100vh;
-    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    transition: background 0.3s ease;
-  }
-
-  body.dark-mode {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  }
-
-  .container {
-    width: 100%;
-    max-width: 1000px;
-  }
-
-  .top-controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-    gap: 20px;
-    flex-wrap: wrap;
-  }
-
-  .dark-mode-toggle {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50px;
-    padding: 10px 20px;
-    color: white;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
-  }
-
-  .dark-mode-toggle:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
-  }
-
-  .volume-control {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.1);
-    padding: 15px 20px;
-    border-radius: 15px;
-    backdrop-filter: blur(10px);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .volume-control label {
-    color: white;
-    font-weight: 500;
-    min-width: 60px;
-  }
-
-  .volume-control input[type="range"] {
-    width: 150px;
-    cursor: pointer;
-  }
-
-  .volume-value {
-    color: white;
-    min-width: 40px;
-    text-align: right;
-  }
-
-  .header {
-    text-align: center;
-    color: white;
-    margin-bottom: 40px;
-  }
-
-  .header h1 {
-    font-size: 3.5rem;
-    margin-bottom: 10px;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  }
-
-  .header p {
-    font-size: 1.1rem;
-    opacity: 0.9;
-  }
-
-  .soundboard {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
-  }
-
-  .sound-button {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
-    padding: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    color: white;
-    font-size: 2.2rem;
-    font-weight: bold;
-    user-select: none;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .sound-button::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 100%);
-  }
-
-  .sound-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.6);
-    transform: translateY(-8px);
-    box-shadow: 0 15px 50px rgba(31, 38, 135, 0.5), 0 0 30px rgba(255, 0, 110, 0.3);
-  }
-
-  .sound-button.active {
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(0.95) translateY(-5px);
-    box-shadow: 0 20px 60px rgba(31, 38, 135, 0.7), 0 0 40px rgba(255, 0, 110, 0.5);
-    animation: pulse 0.6s ease-out;
-  }
-
-  @keyframes pulse {
-    0% {
-      box-shadow: 0 0 0 0 rgba(255, 0, 110, 0.7);
-    }
-    70% {
-      box-shadow: 0 0 0 20px rgba(255, 0, 110, 0);
-    }
-    100% {
-      box-shadow: 0 0 0 0 rgba(255, 0, 110, 0);
-    }
-  }
-
-  @keyframes ripple {
-    0% {
-      width: 0;
-      height: 0;
-      opacity: 1;
-    }
-    100% {
-      width: 100px;
-      height: 100px;
-      opacity: 0;
-    }
-  }
-
-  .sound-button.ripple::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 50%;
-    transform: translate(-50%, -50%);
-    animation: ripple 0.6s ease-out;
-  }
-
-  .sound-info {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    align-items: center;
-    z-index: 1;
-  }
-
-  .sound-key {
-    font-size: 1.2rem;
-    opacity: 0.9;
-  }
-
-  .sound-name {
-    font-size: 0.8rem;
-    opacity: 0.8;
-    font-weight: normal;
-    text-align: center;
-  }
-
-  .sound-duration {
-    font-size: 0.7rem;
-    opacity: 0.6;
-  }
-
-  .waveform-container {
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
-    padding: 20px;
-    backdrop-filter: blur(10px);
-    margin-bottom: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 80px;
-  }
-
-  .waveform {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    height: 100%;
-  }
-
-  .wave-bar {
-    width: 4px;
-    background: linear-gradient(180deg, var(--accent), var(--primary));
-    border-radius: 2px;
-    animation: wave 0.6s ease-in-out infinite;
-  }
-
-  .wave-bar:nth-child(1) { animation-delay: 0s; height: 20%; }
-  .wave-bar:nth-child(2) { animation-delay: 0.1s; height: 40%; }
-  .wave-bar:nth-child(3) { animation-delay: 0.2s; height: 60%; }
-  .wave-bar:nth-child(4) { animation-delay: 0.3s; height: 80%; }
-  .wave-bar:nth-child(5) { animation-delay: 0.4s; height: 100%; }
-  .wave-bar:nth-child(6) { animation-delay: 0.3s; height: 80%; }
-  .wave-bar:nth-child(7) { animation-delay: 0.2s; height: 60%; }
-  .wave-bar:nth-child(8) { animation-delay: 0.1s; height: 40%; }
-  .wave-bar:nth-child(9) { animation-delay: 0s; height: 20%; }
-
-  @keyframes wave {
-    0%, 100% { height: 20%; }
-    50% { height: 100%; }
-  }
-
-  .waveform.hidden {
-    display: none;
-  }
-
-  .status-bar {
-    background: rgba(255, 255, 255, 0.15);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 15px;
-    padding: 20px;
-    text-align: center;
-    color: white;
-    backdrop-filter: blur(10px);
-    box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
-  }
-
-  .status-text {
-    font-size: 1.1rem;
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-
-  .status-controls {
-    display: flex;
-    gap: 15px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .status-control {
-    background: rgba(255, 255, 255, 0.2);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 10px;
-    padding: 8px 15px;
-    color: white;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-  }
-
-  .status-control:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.05);
-  }
-
-  .status-control.active {
-    background: var(--accent);
-    border-color: var(--accent);
-  }
-
-  .keyboard-hint {
-    text-align: center;
-    color: rgba(255, 255, 255, 0.7);
-    margin-top: 15px;
-    font-size: 0.9rem;
-  }
-
-  @media (max-width: 600px) {
-    .header h1 {
-      font-size: 2.5rem;
-    }
-
-    .soundboard {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
-
-    .sound-button {
-      padding: 20px;
-      font-size: 1.8rem;
-    }
-
-    .top-controls {
-      flex-direction: column;
-    }
-
-    .volume-control {
-      width: 100%;
-    }
-
-    .waveform-container {
-      height: 60px;
-    }
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#11110f" />
+  <title>MONUMENT / Architecture, in resonance</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root { --ink:#f3f0e7; --muted:#aaa69a; --line:rgba(243,240,231,.2); --paper:#11110f; --gold:#d8bc83; --blue:#92b6bc; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Manrope, sans-serif; overflow-x:hidden; }
+    body:before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.06; z-index:10; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E"); }
+    a { color:inherit; text-decoration:none; } button { font:inherit; color:inherit; cursor:pointer; }
+    .mono { font:12px 'DM Mono', monospace; letter-spacing:.08em; text-transform:uppercase; }
+    header { position:absolute; width:100%; z-index:5; padding:28px 4vw; display:flex; justify-content:space-between; align-items:center; }
+    .brand { display:flex; gap:12px; align-items:center; font-weight:700; letter-spacing:.16em; font-size:12px; }
+    .brand-mark { width:24px; height:24px; border:1px solid var(--gold); border-radius:50%; position:relative; }
+    .brand-mark:after { content:""; position:absolute; left:5px; right:5px; top:11px; border-top:1px solid var(--gold); transform:rotate(-45deg); }
+    nav { display:flex; gap:28px; color:var(--muted); }
+    nav a:hover { color:var(--ink); }
+    .sound { border:1px solid var(--line); padding:9px 13px; background:transparent; display:flex; align-items:center; gap:10px; }
+    .sound-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 4px rgba(216,188,131,.12); }
+    .sound.playing .sound-dot { animation:pulse 1s infinite; }
+    .hero { min-height:100vh; position:relative; display:flex; align-items:flex-end; padding:0 4vw 7vh; overflow:hidden; background:radial-gradient(circle at 75% 20%,#31362f 0,#11110f 42%); }
+    .hero:after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(17,17,15,.96) 0%,rgba(17,17,15,.35) 46%,rgba(17,17,15,.1)), linear-gradient(0deg,#11110f 0,transparent 35%); }
+    .hero-image { position:absolute; inset:0; background:linear-gradient(125deg,transparent 40%,rgba(216,188,131,.12)), url('https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=2200&q=85') center/cover; opacity:.7; filter:sepia(.25) saturate(.7); }
+    .hero-copy { position:relative; z-index:1; max-width:750px; }
+    .eyebrow { color:var(--gold); margin-bottom:22px; }
+    h1 { font-size:clamp(58px,10vw,150px); line-height:.85; letter-spacing:-.075em; font-weight:500; margin:0; }
+    h1 em { font-family:'Playfair Display', serif; font-weight:500; }
+    .hero-foot { position:absolute; z-index:2; right:4vw; bottom:7vh; width:220px; color:var(--muted); line-height:1.6; }
+    .hero-foot:before { content:""; display:block; width:40px; border-top:1px solid var(--gold); margin-bottom:18px; }
+    .scroll-cue { position:absolute; left:4vw; bottom:27px; z-index:2; color:var(--muted); }
+    section { padding:130px 4vw; position:relative; }
+    .intro { display:grid; grid-template-columns:1fr 1.6fr; gap:10vw; border-bottom:1px solid var(--line); }
+    .section-label { color:var(--gold); }
+    .lede { font-size:clamp(30px,4vw,59px); line-height:1.08; letter-spacing:-.05em; margin:0; max-width:900px; }
+    .lede em { font-family:'Playfair Display'; }
+    .archive-head { display:flex; justify-content:space-between; align-items:end; border-bottom:1px solid var(--line); padding-bottom:25px; }
+    .archive-head h2 { font-size:clamp(38px,5vw,70px); letter-spacing:-.07em; margin:0; font-weight:500; }
+    .projects { display:grid; grid-template-columns:1.3fr 1fr; gap:18px; padding-top:18px; }
+    .project { min-height:480px; position:relative; overflow:hidden; background:#272b27; display:flex; align-items:flex-end; padding:27px; }
+    .project:first-child { min-height:650px; }
+    .project-bg { position:absolute; inset:0; background:center/cover; transition:transform .7s; filter:saturate(.65); }
+    .project:hover .project-bg { transform:scale(1.06); }
+    .project:after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(10,10,9,.9),transparent 70%); }
+    .taj { background-image:url('https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=80'); }
+    .sagrada { background-image:url('https://images.unsplash.com/photo-1583779457094-ab6f99b6e9d3?auto=format&fit=crop&w=1000&q=80'); }
+    .project-info { position:relative; z-index:1; width:100%; display:flex; justify-content:space-between; align-items:end; }
+    .project h3 { font-size:34px; font-weight:500; letter-spacing:-.06em; margin:8px 0 0; }
+    .project small { color:var(--muted); }
+    .arrow { border:1px solid var(--line); width:42px; height:42px; border-radius:50%; display:grid; place-items:center; transition:.3s; }
+    .project:hover .arrow { background:var(--gold); color:var(--paper); }
+    .lab { background:#e5e1d6; color:#191917; padding-bottom:90px; }
+    .lab .section-label { color:#88704a; }
+    .lab-grid { display:grid; grid-template-columns:1.15fr 1fr; gap:7vw; align-items:center; }
+    .lab h2 { font-size:clamp(50px,7vw,100px); letter-spacing:-.08em; line-height:.85; margin:25px 0; font-weight:500; }
+    .lab p { max-width:420px; color:#625e55; line-height:1.6; }
+    .viewer { height:580px; background:#c8c3b6; position:relative; overflow:hidden; border:1px solid rgba(25,25,23,.25); }
+    #scene { width:100%; height:100%; display:block; }
+    .viewer-ui { position:absolute; inset:22px; pointer-events:none; display:flex; justify-content:space-between; align-items:flex-end; }
+    .viewer-controls { display:flex; gap:6px; pointer-events:auto; }
+    .control { background:rgba(17,17,15,.88); color:#f3f0e7; border:0; padding:11px 15px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
+    .control.active { background:var(--gold); color:#181713; }
+    .coordinates { color:#4e4a42; align-self:flex-start; }
+    .caption { padding-top:15px; display:flex; justify-content:space-between; color:#716b60; }
+    .manifesto { text-align:center; padding:180px 8vw; }
+    .manifesto blockquote { font-size:clamp(37px,6vw,85px); line-height:1; letter-spacing:-.07em; margin:0 auto 35px; max-width:1050px; }
+    .manifesto blockquote em { font-family:'Playfair Display'; }
+    footer { padding:30px 4vw; border-top:1px solid var(--line); display:flex; justify-content:space-between; color:var(--muted); }
+    @keyframes pulse { 50% { transform:scale(1.7); opacity:.4; } }
+    @media (max-width:760px) { nav { display:none; } .hero-foot { display:none; } .intro,.lab-grid,.projects { grid-template-columns:1fr; } section { padding:85px 6vw; } .project,.project:first-child { min-height:430px; } .viewer { height:440px; } .archive-head { align-items:start; flex-direction:column; gap:20px; } }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="top-controls">
-      <button class="dark-mode-toggle" id="darkModeToggle">🌙 Dark Mode</button>
-      <div class="volume-control">
-        <label for="masterVolume">🔊 Volume:</label>
-        <input type="range" id="masterVolume" min="0" max="100" value="70">
-        <span class="volume-value" id="volumeValue">70%</span>
-      </div>
-    </div>
-
-    <div class="header">
-      <h1>🎵 Music Soundboard</h1>
-      <p>Press keys or click buttons to play sounds</p>
-    </div>
-
-    <div class="waveform-container">
-      <div class="waveform hidden" id="waveform">
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-        <div class="wave-bar"></div>
-      </div>
-    </div>
-
-    <div class="soundboard">
-      <button class="sound-button" data-key="1" title="Press 1 or click">
-        <div class="sound-info">
-          <div class="sound-key">1</div>
-          <div class="sound-name">Horror Sting</div>
-          <div class="sound-duration">5s</div>
-        </div>
-      </button>
-      <button class="sound-button" data-key="2" title="Press 2 or click">
-        <div class="sound-info">
-          <div class="sound-key">2</div>
-          <div class="sound-name">Trumpet Fanfare</div>
-          <div class="sound-duration">3s</div>
-        </div>
-      </button>
-      <button class="sound-button" data-key="3" title="Press 3 or click">
-        <div class="sound-info">
-          <div class="sound-key">3</div>
-          <div class="sound-name">Fahh Sound</div>
-          <div class="sound-duration">1s</div>
-        </div>
-      </button>
-      <button class="sound-button" data-key="4" title="Press 4 or click">
-        <div class="sound-info">
-          <div class="sound-key">4</div>
-          <div class="sound-name">Funny Music</div>
-          <div class="sound-duration">1s</div>
-        </div>
-      </button>
-      <button class="sound-button" data-key="5" title="Press 5 or click">
-        <div class="sound-info">
-          <div class="sound-key">5</div>
-          <div class="sound-name">Bonus Track</div>
-          <div class="sound-duration">TBD</div>
-        </div>
-      </button>
-      <button class="sound-button" data-key="6" title="Press 6 or click">
-        <div class="sound-info">
-          <div class="sound-key">6</div>
-          <div class="sound-name">Bonus Track</div>
-          <div class="sound-duration">TBD</div>
-        </div>
-      </button>
-    </div>
-
-    <div class="status-bar">
-      <div class="status-text" id="status">🎧 Ready to play</div>
-      <div class="status-controls">
-        <button class="status-control" id="loopToggle">🔄 Loop: OFF</button>
-        <button class="status-control" id="equalizerToggle">🎛️ Normal</button>
-      </div>
-      <div class="keyboard-hint">Press 1-6 or click buttons • Volume adjustable • Dark mode available</div>
-    </div>
-  </div>
-
-  <audio id="player"></audio>
-
-  <script src="audio-mapper.js?v=3"></script>
+  <header><a class="brand" href="#top"><span class="brand-mark"></span>MONUMENT / 01</a><nav class="mono"><a href="#archive">Archive</a><a href="#lab">Digital twin</a><a href="#about">About</a></nav><button class="sound mono" id="soundBtn"><span class="sound-dot"></span><span id="soundText">Sound off</span></button></header>
+  <main id="top">
+    <section class="hero"><div class="hero-image"></div><div class="hero-copy"><div class="eyebrow mono">A living archive of the built world</div><h1>Spaces that<br><em>outlive us.</em></h1></div><div class="hero-foot mono">Explore the structures that taught humanity how to look up.</div><div class="scroll-cue mono">↓ Scroll to enter</div></section>
+    <section class="intro"><div class="section-label mono">01 / The premise</div><p class="lede">Architecture is more than a place. It is <em>light, weight, ritual</em> — a memory you can walk through.</p></section>
+    <section id="archive"><div class="archive-head"><h2>Selected monuments</h2><span class="mono" style="color:var(--muted)">02 — 06 / Browse collection</span></div><div class="projects"><a class="project" href="#lab"><div class="project-bg taj"></div><div class="project-info"><div><small class="mono">Agra, India / 1632</small><h3>Taj Mahal</h3></div><span class="arrow">↗</span></div></a><a class="project" href="#lab"><div class="project-bg sagrada"></div><div class="project-info"><div><small class="mono">Barcelona, Spain / 1882</small><h3>Sagrada Família</h3></div><span class="arrow">↗</span></div></a></div></section>
+    <section id="lab" class="lab"><div class="lab-grid"><div><div class="section-label mono">03 / The digital twin</div><h2>See it<br><em>from within.</em></h2><p>Drag to orbit the study model. Switch the sun and reveal the structure beneath the surface. This is architecture as an instrument — measured, lit, and heard.</p></div><div><div class="viewer"><canvas id="scene"></canvas><div class="viewer-ui"><div class="coordinates mono">27°10′N / 78°02′E<br>MARBLE / AIR / LIGHT</div><div class="viewer-controls"><button class="control active" id="dayBtn">Day</button><button class="control" id="nightBtn">Night</button><button class="control" id="sliceBtn">Slice</button></div></div></div><div class="caption mono"><span>Taj Mahal / Study model</span><span>Drag to orbit ↗</span></div></div></div></section>
+    <section id="about" class="manifesto"><div class="section-label mono">04 / A note from the archive</div><blockquote>“The future of architecture is not in the newest shape, but in the <em>oldest feeling.</em>”</blockquote><span class="mono" style="color:var(--muted)">— MONUMENT FIELD NOTES, VOL. 01</span></section>
+  </main>
+  <footer class="mono"><span>MONUMENT © 2024</span><span>Built for the curious</span><span>Sound / Light / Matter</span></footer>
+  <audio id="ambience" loop src="magic-intro.wav"></audio>
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
+    const canvas=document.querySelector('#scene'), viewer=canvas.parentElement;
+    const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true;
+    const scene=new THREE.Scene(); scene.background=new THREE.Color(0xc8c3b6); const camera=new THREE.PerspectiveCamera(35,1,.1,100); camera.position.set(7,5.5,8); camera.lookAt(0,2,0);
+    const group=new THREE.Group(); scene.add(group); const mats={stone:new THREE.MeshStandardMaterial({color:0xf0e8d4,roughness:.7}), dark:new THREE.MeshStandardMaterial({color:0x8f8775,roughness:.8}), gold:new THREE.MeshStandardMaterial({color:0xb18e59,metalness:.45,roughness:.4})};
+    const box=(w,h,d,x,y,z,mat=mats.stone)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.castShadow=true;group.add(m);return m};
+    box(5,.35,3.5,0,.18,0,mats.dark); box(4.3,2.8,2.8,0,1.7,0); box(5.7,.22,4.1,0,3.2,0,mats.gold);
+    const makeDome=(x,z,s=1)=>{const d=new THREE.Mesh(new THREE.SphereGeometry(1.2*s,32,18,0,Math.PI*2,0,Math.PI/2),mats.stone);d.position.set(x,3.3,z);d.scale.y=1.35;d.castShadow=true;group.add(d); const sp=new THREE.Mesh(new THREE.ConeGeometry(.12*s,.55*s,12),mats.gold);sp.position.set(x,4.9*s/1.1+0.2,z);group.add(sp)};
+    makeDome(0,0,1.2); makeDome(-2,-1.1,.55); makeDome(2,-1.1,.55);
+    for(let i=-1;i<=1;i++){ for(let j=-1;j<=1;j++){ if(i||j) box(.45,2.6,.45,i*2.25,1.55,j*1.35,mats.stone); }}
+    const sun=new THREE.DirectionalLight(0xffe0a5,4); sun.position.set(5,8,5); sun.castShadow=true; scene.add(sun); scene.add(new THREE.AmbientLight(0x8a8f91,1.8));
+    let targetX=0,targetY=0,rotX=0,rotY=0,down=false,lastX=0,lastY=0,sliced=false; function resize(){const r=viewer.getBoundingClientRect(); renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()} addEventListener('resize',resize);resize();
+    function animate(){requestAnimationFrame(animate);rotX+=(targetX-rotX)*.08;rotY+=(targetY-rotY)*.08;group.rotation.y=rotX;group.rotation.x=rotY;renderer.render(scene,camera)} animate();
+    canvas.onpointerdown=e=>{down=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)};canvas.onpointerup=()=>down=false;canvas.onpointermove=e=>{if(!down)return;targetX+=(e.clientX-lastX)*.008;targetY=Math.max(-.35,Math.min(.35,targetY+(e.clientY-lastY)*.005));lastX=e.clientX;lastY=e.clientY};
+    const day=document.querySelector('#dayBtn'),night=document.querySelector('#nightBtn'),slice=document.querySelector('#sliceBtn'); day.onclick=()=>{sun.intensity=4;scene.background.set(0xc8c3b6);day.classList.add('active');night.classList.remove('active')}; night.onclick=()=>{sun.intensity=.6;scene.background.set(0x202632);night.classList.add('active');day.classList.remove('active')}; slice.onclick=()=>{sliced=!sliced;group.children.forEach((m,i)=>{m.visible=!sliced||i%2===0});slice.classList.toggle('active',sliced)};
+    const audio=document.querySelector('#ambience'), sound=document.querySelector('#soundBtn'); sound.onclick=async()=>{if(audio.paused){try{await audio.play();sound.classList.add('playing');document.querySelector('#soundText').textContent='Sound on'}catch(e){}}else{audio.pause();sound.classList.remove('playing');document.querySelector('#soundText').textContent='Sound off'}};
+  </script>
 </body>
 </html>
