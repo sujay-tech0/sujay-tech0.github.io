@@ -1,109 +1,845 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#11110f" />
-  <title>MONUMENT / Architecture, in resonance</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;1,500&display=swap" rel="stylesheet">
-  <style>
-    :root { --ink:#f3f0e7; --muted:#aaa69a; --line:rgba(243,240,231,.2); --paper:#11110f; --gold:#d8bc83; --blue:#92b6bc; }
-    * { box-sizing:border-box; }
-    html { scroll-behavior:smooth; }
-    body { margin:0; background:var(--paper); color:var(--ink); font-family:Manrope, sans-serif; overflow-x:hidden; }
-    body:before { content:""; position:fixed; inset:0; pointer-events:none; opacity:.06; z-index:10; background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E"); }
-    a { color:inherit; text-decoration:none; } button { font:inherit; color:inherit; cursor:pointer; }
-    .mono { font:12px 'DM Mono', monospace; letter-spacing:.08em; text-transform:uppercase; }
-    header { position:absolute; width:100%; z-index:5; padding:28px 4vw; display:flex; justify-content:space-between; align-items:center; }
-    .brand { display:flex; gap:12px; align-items:center; font-weight:700; letter-spacing:.16em; font-size:12px; }
-    .brand-mark { width:24px; height:24px; border:1px solid var(--gold); border-radius:50%; position:relative; }
-    .brand-mark:after { content:""; position:absolute; left:5px; right:5px; top:11px; border-top:1px solid var(--gold); transform:rotate(-45deg); }
-    nav { display:flex; gap:28px; color:var(--muted); }
-    nav a:hover { color:var(--ink); }
-    .sound { border:1px solid var(--line); padding:9px 13px; background:transparent; display:flex; align-items:center; gap:10px; }
-    .sound-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); box-shadow:0 0 0 4px rgba(216,188,131,.12); }
-    .sound.playing .sound-dot { animation:pulse 1s infinite; }
-    .hero { min-height:100vh; position:relative; display:flex; align-items:flex-end; padding:0 4vw 7vh; overflow:hidden; background:radial-gradient(circle at 75% 20%,#31362f 0,#11110f 42%); }
-    .hero:after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,rgba(17,17,15,.96) 0%,rgba(17,17,15,.35) 46%,rgba(17,17,15,.1)), linear-gradient(0deg,#11110f 0,transparent 35%); }
-    .hero-image { position:absolute; inset:0; background:linear-gradient(125deg,transparent 40%,rgba(216,188,131,.12)), url('https://images.unsplash.com/photo-1548013146-72479768bada?auto=format&fit=crop&w=2200&q=85') center/cover; opacity:.7; filter:sepia(.25) saturate(.7); }
-    .hero-copy { position:relative; z-index:1; max-width:750px; }
-    .eyebrow { color:var(--gold); margin-bottom:22px; }
-    h1 { font-size:clamp(58px,10vw,150px); line-height:.85; letter-spacing:-.075em; font-weight:500; margin:0; }
-    h1 em { font-family:'Playfair Display', serif; font-weight:500; }
-    .hero-foot { position:absolute; z-index:2; right:4vw; bottom:7vh; width:220px; color:var(--muted); line-height:1.6; }
-    .hero-foot:before { content:""; display:block; width:40px; border-top:1px solid var(--gold); margin-bottom:18px; }
-    .scroll-cue { position:absolute; left:4vw; bottom:27px; z-index:2; color:var(--muted); }
-    section { padding:130px 4vw; position:relative; }
-    .intro { display:grid; grid-template-columns:1fr 1.6fr; gap:10vw; border-bottom:1px solid var(--line); }
-    .section-label { color:var(--gold); }
-    .lede { font-size:clamp(30px,4vw,59px); line-height:1.08; letter-spacing:-.05em; margin:0; max-width:900px; }
-    .lede em { font-family:'Playfair Display'; }
-    .archive-head { display:flex; justify-content:space-between; align-items:end; border-bottom:1px solid var(--line); padding-bottom:25px; }
-    .archive-head h2 { font-size:clamp(38px,5vw,70px); letter-spacing:-.07em; margin:0; font-weight:500; }
-    .projects { display:grid; grid-template-columns:1.3fr 1fr; gap:18px; padding-top:18px; }
-    .project { min-height:480px; position:relative; overflow:hidden; background:#272b27; display:flex; align-items:flex-end; padding:27px; }
-    .project:first-child { min-height:650px; }
-    .project-bg { position:absolute; inset:0; background:center/cover; transition:transform .7s; filter:saturate(.65); }
-    .project:hover .project-bg { transform:scale(1.06); }
-    .project:after { content:""; position:absolute; inset:0; background:linear-gradient(0deg,rgba(10,10,9,.9),transparent 70%); }
-    .taj { background-image:url('https://images.unsplash.com/photo-1564507592333-c60657eea523?auto=format&fit=crop&w=1200&q=80'); }
-    .sagrada { background-image:url('https://images.unsplash.com/photo-1583779457094-ab6f99b6e9d3?auto=format&fit=crop&w=1000&q=80'); }
-    .project-info { position:relative; z-index:1; width:100%; display:flex; justify-content:space-between; align-items:end; }
-    .project h3 { font-size:34px; font-weight:500; letter-spacing:-.06em; margin:8px 0 0; }
-    .project small { color:var(--muted); }
-    .arrow { border:1px solid var(--line); width:42px; height:42px; border-radius:50%; display:grid; place-items:center; transition:.3s; }
-    .project:hover .arrow { background:var(--gold); color:var(--paper); }
-    .lab { background:#e5e1d6; color:#191917; padding-bottom:90px; }
-    .lab .section-label { color:#88704a; }
-    .lab-grid { display:grid; grid-template-columns:1.15fr 1fr; gap:7vw; align-items:center; }
-    .lab h2 { font-size:clamp(50px,7vw,100px); letter-spacing:-.08em; line-height:.85; margin:25px 0; font-weight:500; }
-    .lab p { max-width:420px; color:#625e55; line-height:1.6; }
-    .viewer { height:580px; background:#c8c3b6; position:relative; overflow:hidden; border:1px solid rgba(25,25,23,.25); }
-    #scene { width:100%; height:100%; display:block; }
-    .viewer-ui { position:absolute; inset:22px; pointer-events:none; display:flex; justify-content:space-between; align-items:flex-end; }
-    .viewer-controls { display:flex; gap:6px; pointer-events:auto; }
-    .control { background:rgba(17,17,15,.88); color:#f3f0e7; border:0; padding:11px 15px; font-size:11px; letter-spacing:.08em; text-transform:uppercase; }
-    .control.active { background:var(--gold); color:#181713; }
-    .coordinates { color:#4e4a42; align-self:flex-start; }
-    .caption { padding-top:15px; display:flex; justify-content:space-between; color:#716b60; }
-    .manifesto { text-align:center; padding:180px 8vw; }
-    .manifesto blockquote { font-size:clamp(37px,6vw,85px); line-height:1; letter-spacing:-.07em; margin:0 auto 35px; max-width:1050px; }
-    .manifesto blockquote em { font-family:'Playfair Display'; }
-    footer { padding:30px 4vw; border-top:1px solid var(--line); display:flex; justify-content:space-between; color:var(--muted); }
-    @keyframes pulse { 50% { transform:scale(1.7); opacity:.4; } }
-    @media (max-width:760px) { nav { display:none; } .hero-foot { display:none; } .intro,.lab-grid,.projects { grid-template-columns:1fr; } section { padding:85px 6vw; } .project,.project:first-child { min-height:430px; } .viewer { height:440px; } .archive-head { align-items:start; flex-direction:column; gap:20px; } }
-  </style>
-</head>
-<body>
-  <header><a class="brand" href="#top"><span class="brand-mark"></span>MONUMENT / 01</a><nav class="mono"><a href="#archive">Archive</a><a href="#lab">Digital twin</a><a href="#about">About</a></nav><button class="sound mono" id="soundBtn"><span class="sound-dot"></span><span id="soundText">Sound off</span></button></header>
-  <main id="top">
-    <section class="hero"><div class="hero-image"></div><div class="hero-copy"><div class="eyebrow mono">A living archive of the built world</div><h1>Spaces that<br><em>outlive us.</em></h1></div><div class="hero-foot mono">Explore the structures that taught humanity how to look up.</div><div class="scroll-cue mono">↓ Scroll to enter</div></section>
-    <section class="intro"><div class="section-label mono">01 / The premise</div><p class="lede">Architecture is more than a place. It is <em>light, weight, ritual</em> — a memory you can walk through.</p></section>
-    <section id="archive"><div class="archive-head"><h2>Selected monuments</h2><span class="mono" style="color:var(--muted)">02 — 06 / Browse collection</span></div><div class="projects"><a class="project" href="#lab"><div class="project-bg taj"></div><div class="project-info"><div><small class="mono">Agra, India / 1632</small><h3>Taj Mahal</h3></div><span class="arrow">↗</span></div></a><a class="project" href="#lab"><div class="project-bg sagrada"></div><div class="project-info"><div><small class="mono">Barcelona, Spain / 1882</small><h3>Sagrada Família</h3></div><span class="arrow">↗</span></div></a></div></section>
-    <section id="lab" class="lab"><div class="lab-grid"><div><div class="section-label mono">03 / The digital twin</div><h2>See it<br><em>from within.</em></h2><p>Drag to orbit the study model. Switch the sun and reveal the structure beneath the surface. This is architecture as an instrument — measured, lit, and heard.</p></div><div><div class="viewer"><canvas id="scene"></canvas><div class="viewer-ui"><div class="coordinates mono">27°10′N / 78°02′E<br>MARBLE / AIR / LIGHT</div><div class="viewer-controls"><button class="control active" id="dayBtn">Day</button><button class="control" id="nightBtn">Night</button><button class="control" id="sliceBtn">Slice</button></div></div></div><div class="caption mono"><span>Taj Mahal / Study model</span><span>Drag to orbit ↗</span></div></div></div></section>
-    <section id="about" class="manifesto"><div class="section-label mono">04 / A note from the archive</div><blockquote>“The future of architecture is not in the newest shape, but in the <em>oldest feeling.</em>”</blockquote><span class="mono" style="color:var(--muted)">— MONUMENT FIELD NOTES, VOL. 01</span></section>
-  </main>
-  <footer class="mono"><span>MONUMENT © 2024</span><span>Built for the curious</span><span>Sound / Light / Matter</span></footer>
-  <audio id="ambience" loop src="magic-intro.wav"></audio>
-  <script type="module">
-    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-    const canvas=document.querySelector('#scene'), viewer=canvas.parentElement;
-    const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true}); renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true;
-    const scene=new THREE.Scene(); scene.background=new THREE.Color(0xc8c3b6); const camera=new THREE.PerspectiveCamera(35,1,.1,100); camera.position.set(7,5.5,8); camera.lookAt(0,2,0);
-    const group=new THREE.Group(); scene.add(group); const mats={stone:new THREE.MeshStandardMaterial({color:0xf0e8d4,roughness:.7}), dark:new THREE.MeshStandardMaterial({color:0x8f8775,roughness:.8}), gold:new THREE.MeshStandardMaterial({color:0xb18e59,metalness:.45,roughness:.4})};
-    const box=(w,h,d,x,y,z,mat=mats.stone)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);m.position.set(x,y,z);m.castShadow=true;group.add(m);return m};
-    box(5,.35,3.5,0,.18,0,mats.dark); box(4.3,2.8,2.8,0,1.7,0); box(5.7,.22,4.1,0,3.2,0,mats.gold);
-    const makeDome=(x,z,s=1)=>{const d=new THREE.Mesh(new THREE.SphereGeometry(1.2*s,32,18,0,Math.PI*2,0,Math.PI/2),mats.stone);d.position.set(x,3.3,z);d.scale.y=1.35;d.castShadow=true;group.add(d); const sp=new THREE.Mesh(new THREE.ConeGeometry(.12*s,.55*s,12),mats.gold);sp.position.set(x,4.9*s/1.1+0.2,z);group.add(sp)};
-    makeDome(0,0,1.2); makeDome(-2,-1.1,.55); makeDome(2,-1.1,.55);
-    for(let i=-1;i<=1;i++){ for(let j=-1;j<=1;j++){ if(i||j) box(.45,2.6,.45,i*2.25,1.55,j*1.35,mats.stone); }}
-    const sun=new THREE.DirectionalLight(0xffe0a5,4); sun.position.set(5,8,5); sun.castShadow=true; scene.add(sun); scene.add(new THREE.AmbientLight(0x8a8f91,1.8));
-    let targetX=0,targetY=0,rotX=0,rotY=0,down=false,lastX=0,lastY=0,sliced=false; function resize(){const r=viewer.getBoundingClientRect(); renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()} addEventListener('resize',resize);resize();
-    function animate(){requestAnimationFrame(animate);rotX+=(targetX-rotX)*.08;rotY+=(targetY-rotY)*.08;group.rotation.y=rotX;group.rotation.x=rotY;renderer.render(scene,camera)} animate();
-    canvas.onpointerdown=e=>{down=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)};canvas.onpointerup=()=>down=false;canvas.onpointermove=e=>{if(!down)return;targetX+=(e.clientX-lastX)*.008;targetY=Math.max(-.35,Math.min(.35,targetY+(e.clientY-lastY)*.005));lastX=e.clientX;lastY=e.clientY};
-    const day=document.querySelector('#dayBtn'),night=document.querySelector('#nightBtn'),slice=document.querySelector('#sliceBtn'); day.onclick=()=>{sun.intensity=4;scene.background.set(0xc8c3b6);day.classList.add('active');night.classList.remove('active')}; night.onclick=()=>{sun.intensity=.6;scene.background.set(0x202632);night.classList.add('active');day.classList.remove('active')}; slice.onclick=()=>{sliced=!sliced;group.children.forEach((m,i)=>{m.visible=!sliced||i%2===0});slice.classList.toggle('active',sliced)};
-    const audio=document.querySelector('#ambience'), sound=document.querySelector('#soundBtn'); sound.onclick=async()=>{if(audio.paused){try{await audio.play();sound.classList.add('playing');document.querySelector('#soundText').textContent='Sound on'}catch(e){}}else{audio.pause();sound.classList.remove('playing');document.querySelector('#soundText').textContent='Sound off'}};
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ThinkerCAD-inspired Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #edf1f3;
+        --panel: #f7f9fb;
+        --panel-strong: #eef2f4;
+        --toolbar: #ffffff;
+        --muted: #80909f;
+        --ink: #1f2a33;
+        --line: #dfe8ee;
+        --line-strong: #c9d6dd;
+        --blue: #35a0ff;
+        --blue-dark: #1f7ae5;
+        --green: #3cc18d;
+        --purple: #8d7cff;
+        --orange: #f3a24b;
+        --red: #ef6d6d;
+        --shadow: rgba(32, 52, 66, 0.09);
+      }
+
+      * { box-sizing: border-box; }
+      html, body { margin: 0; height: 100%; }
+      body {
+        font-family: "Inter", sans-serif;
+        background: #eaf0f4;
+        color: var(--ink);
+      }
+
+      .app {
+        height: 100vh;
+        display: grid;
+        grid-template-rows: 62px 1fr;
+        background: linear-gradient(180deg, #f3f6f8 0%, #edf2f4 100%);
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 18px;
+        background: rgba(255,255,255,0.9);
+        border-bottom: 1px solid var(--line);
+        backdrop-filter: blur(10px);
+      }
+
+      .topbar-left, .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        letter-spacing: -0.03em;
+        font-size: 1.05rem;
+      }
+
+      .brand-mark {
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        background: linear-gradient(135deg, #ffb347, #ff7a59, #5db8ff);
+        position: relative;
+        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7);
+      }
+
+      .brand-mark::before {
+        content: "";
+        position: absolute;
+        inset: 3px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.28);
+      }
+
+      .menu {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.74rem;
+        font-weight: 600;
+      }
+
+      .menu button {
+        background: transparent;
+        border: none;
+        color: inherit;
+        padding: 8px 10px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .menu button:hover { background: #edf3f7; }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .pill {
+        background: #eef4f7;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        height: 34px;
+        padding: 0 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.74rem;
+        font-weight: 600;
+        color: var(--ink);
+      }
+
+      .primary {
+        background: #26a5ff;
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 8px 16px rgba(38,165,255,0.22);
+      }
+
+      .workspace {
+        display: grid;
+        grid-template-columns: 92px 1fr 310px;
+        min-height: 0;
+      }
+
+      .tool-panel,
+      .inspector {
+        background: rgba(255,255,255,0.78);
+        border-right: 1px solid var(--line);
+      }
+
+      .tool-panel {
+        padding: 16px 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .tool {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 14px;
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, #ffffff 0%, #f5f9fb 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+        box-shadow: 0 6px 14px rgba(31, 42, 51, 0.04);
+      }
+
+      .tool:hover {
+        transform: translateY(-1px);
+        border-color: var(--line-strong);
+      }
+
+      .tool.active {
+        background: linear-gradient(180deg, #eaf6ff 0%, #dfeeff 100%);
+        border-color: #9ecbff;
+        box-shadow: inset 0 0 0 1px rgba(31,122,229,0.18);
+      }
+
+      .tool-icon {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        position: relative;
+        display: block;
+      }
+
+      .cube { background: linear-gradient(145deg, #9ed5ff, #65b1ff); }
+      .cube::before {
+        content: ""; position: absolute; inset: 5px; border-radius: 3px; background: rgba(255,255,255,0.25);
+      }
+      .cylinder { background: linear-gradient(145deg, #b5e3d3, #59c8a3); border-radius: 50%; }
+      .cylinder::before { content: ""; position: absolute; inset: 6px 8px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+      .cone { background: linear-gradient(145deg, #ffd09b, #f3a24b); clip-path: polygon(50% 0%, 100% 100%, 0% 100%); }
+      .ring { background: linear-gradient(145deg, #d4d9ff, #8d7cff); border-radius: 50%; }
+      .ring::before { content: ""; position: absolute; inset: 8px; border: 3px solid rgba(255,255,255,0.8); border-radius: 50%; }
+      .sphere { background: linear-gradient(145deg, #f5c4d6, #ef6d6d); border-radius: 50%; }
+      .sphere::before { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: rgba(255,255,255,0.25); }
+
+      .tool span {
+        font-size: 0.63rem;
+        font-weight: 600;
+        color: #425563;
+      }
+
+      .viewport-shell {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: linear-gradient(180deg, #eef4f7 0%, #ecf2f5 100%);
+      }
+
+      .viewport-shell::before {
+        content: "";
+        position: absolute;
+        inset: 26px 30px 28px 30px;
+        border: 1px solid rgba(93, 111, 123, 0.18);
+        border-radius: 20px;
+        background: rgba(255,255,255,0.3);
+      }
+
+      canvas {
+        position: relative;
+        z-index: 1;
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: grab;
+      }
+
+      canvas:active { cursor: grabbing; }
+
+      .viewport-ui {
+        position: absolute;
+        z-index: 2;
+        left: 48px;
+        right: 48px;
+        bottom: 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        pointer-events: none;
+      }
+
+      .mini-toolbar {
+        pointer-events: auto;
+        display: flex;
+        gap: 8px;
+        padding: 8px;
+        background: rgba(255,255,255,0.82);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        box-shadow: 0 12px 22px rgba(31, 42, 51, 0.08);
+      }
+
+      .mini-btn {
+        border: 1px solid var(--line);
+        background: white;
+        color: var(--ink);
+        border-radius: 10px;
+        height: 34px;
+        padding: 0 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .mini-btn.primary {
+        background: var(--blue);
+        color: white;
+        border-color: transparent;
+      }
+
+      .depth-label {
+        pointer-events: auto;
+        background: rgba(255,255,255,0.7);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px 10px;
+        font-size: 0.7rem;
+        color: var(--muted);
+        font-weight: 600;
+      }
+
+      .inspector {
+        border-right: none;
+        border-left: 1px solid var(--line);
+        padding: 18px 16px;
+      }
+
+      .panel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .panel-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--green);
+        box-shadow: 0 0 0 4px rgba(60,193,141,0.14);
+      }
+
+      .property-card {
+        background: linear-gradient(180deg, #fff, #f5f9fb);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 12px;
+        box-shadow: 0 10px 16px rgba(31,42,51,0.04);
+      }
+
+      .part-name {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .block-swatch {
+        width: 26px;
+        height: 26px;
+        border-radius: 9px;
+        border: 1px solid rgba(31,42,51,0.08);
+        background: linear-gradient(180deg, #9ed5ff, #69b4ff);
+      }
+
+      .measure-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+        margin-top: 10px;
+      }
+
+      .measure {
+        background: #f3f7f9;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px 10px;
+      }
+
+      .measure label {
+        display: block;
+        font-size: 0.58rem;
+        text-transform: uppercase;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        margin-bottom: 4px;
+      }
+
+      .measure strong {
+        font-size: 0.9rem;
+      }
+
+      .options {
+        display: grid;
+        gap: 12px;
+        margin-top: 16px;
+      }
+
+      .option {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        color: #304452;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .segmented {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        background: #edf3f7;
+        padding: 4px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+      }
+
+      .segmented button {
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        padding: 8px 6px;
+        font-weight: 700;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .segmented button.active {
+        background: white;
+        color: var(--ink);
+        box-shadow: 0 2px 8px rgba(31,42,51,0.06);
+      }
+
+      .swatches {
+        display: flex;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      .swatch {
+        width: 24px;
+        height: 24px;
+        border-radius: 7px;
+        border: 2px solid transparent;
+        cursor: pointer;
+      }
+
+      .swatch.active {
+        border-color: var(--ink);
+        box-shadow: 0 0 0 2px rgba(31, 42, 51, 0.08);
+      }
+
+      .stats {
+        margin-top: 18px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .stat-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: #536876;
+      }
+
+      .stat-row strong { color: var(--ink); }
+
+      @media (max-width: 980px) {
+        .workspace {
+          grid-template-columns: 70px 1fr 260px;
+        }
+      }
+
+      @media (max-width: 760px) {
+        .topbar {
+          padding: 0 10px;
+        }
+        .menu {
+          display: none;
+        }
+        .workspace {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 1fr auto;
+        }
+        .tool-panel {
+          flex-direction: row;
+          overflow-x: auto;
+          border-right: none;
+          border-bottom: 1px solid var(--line);
+          padding: 12px 10px;
+        }
+        .tool {
+          min-width: 68px;
+        }
+        .viewport-shell::before {
+          inset: 14px 14px 20px 14px;
+        }
+        .inspector {
+          border-left: none;
+          border-top: 1px solid var(--line);
+          padding: 14px 12px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="brand"><span class="brand-mark"></span> Studio</div>
+          <div class="menu">
+            <button>File</button>
+            <button>Edit</button>
+            <button>View</button>
+            <button>Tools</button>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="pill">Design v2</div>
+          <div class="pill">A3-124</div>
+          <button class="pill primary">Share</button>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="tool-panel">
+          <button class="tool active" data-tool="box"><span class="tool-icon cube"></span><span>Box</span></button>
+          <button class="tool" data-tool="cylinder"><span class="tool-icon cylinder"></span><span>Cyl.</span></button>
+          <button class="tool" data-tool="cone"><span class="tool-icon cone"></span><span>Cone</span></button>
+          <button class="tool" data-tool="ring"><span class="tool-icon ring"></span><span>Ring</span></button>
+          <button class="tool" data-tool="sphere"><span class="tool-icon sphere"></span><span>Ball</span></button>
+        </aside>
+
+        <main class="viewport-shell">
+          <canvas id="workCanvas" width="1200" height="920"></canvas>
+          <div class="viewport-ui">
+            <div class="mini-toolbar">
+              <button class="mini-btn primary" id="addShape">Add shape</button>
+              <button class="mini-btn">Align</button>
+              <button class="mini-btn">Group</button>
+            </div>
+            <div class="depth-label">Grid: 10mm</div>
+          </div>
+        </main>
+
+        <aside class="inspector">
+          <div class="panel-header">
+            <div class="panel-title">Inspector</div>
+            <span class="dot"></span>
+          </div>
+
+          <div class="property-card">
+            <div class="part-name">
+              <strong id="partName">Block 01</strong>
+              <div class="block-swatch" id="partColorSwatch"></div>
+            </div>
+
+            <div class="measure-grid">
+              <div class="measure"><label>W</label><strong id="dimW">30</strong></div>
+              <div class="measure"><label>H</label><strong id="dimH">46</strong></div>
+              <div class="measure"><label>D</label><strong id="dimD">30</strong></div>
+              <div class="measure"><label>R</label><strong id="dimR">0°</strong></div>
+            </div>
+          </div>
+
+          <div class="options">
+            <div class="option">
+              <span>Transform</span>
+              <div class="segmented">
+                <button class="active">Move</button>
+                <button>Rotate</button>
+                <button>Scale</button>
+              </div>
+            </div>
+
+            <div class="option" style="display:block;">
+              <span style="display:block; margin-bottom:10px;">Color</span>
+              <div class="swatches">
+                <button class="swatch active" data-color="#9ed5ff" style="background:#9ed5ff"></button>
+                <button class="swatch" data-color="#7dd3a6" style="background:#7dd3a6"></button>
+                <button class="swatch" data-color="#f7b267" style="background:#f7b267"></button>
+                <button class="swatch" data-color="#f68ca0" style="background:#f68ca0"></button>
+                <button class="swatch" data-color="#a8a0ff" style="background:#a8a0ff"></button>
+              </div>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-row"><span>Volume</span><strong>22.5 cm³</strong></div>
+            <div class="stat-row"><span>Mass</span><strong>118 g</strong></div>
+            <div class="stat-row"><span>Material</span><strong>PLA</strong></div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('workCanvas');
+      const ctx = canvas.getContext('2d');
+      const toolButtons = [...document.querySelectorAll('.tool')];
+      const swatches = [...document.querySelectorAll('.swatch')];
+      const addShapeBtn = document.getElementById('addShape');
+
+      const dimW = document.getElementById('dimW');
+      const dimH = document.getElementById('dimH');
+      const dimD = document.getElementById('dimD');
+      const dimR = document.getElementById('dimR');
+      const partName = document.getElementById('partName');
+      const partColorSwatch = document.getElementById('partColorSwatch');
+
+      const templates = {
+        box: { label: 'Block', w: 38, h: 42, d: 28, color: '#9ed5ff', type: 'box' },
+        cylinder: { label: 'Cylinder', w: 30, h: 30, d: 30, color: '#7dd3a6', type: 'cylinder' },
+        cone: { label: 'Cone', w: 30, h: 34, d: 30, color: '#f7b267', type: 'cone' },
+        ring: { label: 'Ring', w: 38, h: 18, d: 38, color: '#a8a0ff', type: 'ring' },
+        sphere: { label: 'Ball', w: 26, h: 26, d: 26, color: '#f68ca0', type: 'sphere' }
+      };
+
+      let currentTool = 'box';
+      let activePart = 0;
+      let drag = null;
+
+      const parts = [
+        { id: 1, name: 'Base', x: 0, y: 0, z: 0, w: 140, h: 18, d: 120, color: '#dfeaf0', type: 'box', rotation: 0 },
+        { id: 2, name: 'Tower', x: 0, y: 0, z: 24, w: 50, h: 90, d: 50, color: '#9ed5ff', type: 'box', rotation: 0 },
+        { id: 3, name: 'Roof', x: 0, y: 0, z: 96, w: 76, h: 18, d: 76, color: '#7dd3a6', type: 'box', rotation: 0 },
+        { id: 4, name: 'Crown', x: 0, y: 0, z: 112, w: 24, h: 18, d: 24, color: '#f7b267', type: 'cylinder', rotation: 0 }
+      ];
+
+      function updateInspector() {
+        const part = parts[activePart];
+        if (!part) return;
+        partName.textContent = part.name;
+        dimW.textContent = Math.round(part.w);
+        dimH.textContent = Math.round(part.h);
+        dimD.textContent = Math.round(part.d);
+        dimR.textContent = `${Math.round(part.rotation)}°`;
+        partColorSwatch.style.background = part.color;
+      }
+
+      function setActiveTool(tool) {
+        currentTool = tool;
+        toolButtons.forEach(t => t.classList.toggle('active', t.dataset.tool === tool));
+      }
+
+      function addShape() {
+        const base = templates[currentTool];
+        const next = parts.length;
+        const newPart = {
+          id: next + 1,
+          name: `${base.label} ${String(next).padStart(2,'0')}`,
+          x: (Math.random() * 80) - 40,
+          y: (Math.random() * 70) - 35,
+          z: 10 + Math.random() * 50,
+          w: base.w,
+          h: base.h,
+          d: base.d,
+          color: base.color,
+          type: base.type,
+          rotation: 0
+        };
+        parts.push(newPart);
+        activePart = parts.length - 1;
+        updateInspector();
+      }
+
+      toolButtons.forEach(btn => btn.addEventListener('click', () => setActiveTool(btn.dataset.tool)));
+      addShapeBtn.addEventListener('click', addShape);
+
+      swatches.forEach(s => s.addEventListener('click', () => {
+        swatches.forEach(v => v.classList.toggle('active', v === s));
+        const part = parts[activePart];
+        if (part) {
+          part.color = s.dataset.color;
+          updateInspector();
+        }
+      }));
+
+      function shade(hex, amount) {
+        const c = hex.replace('#','');
+        const num = parseInt(c, 16);
+        const r = Math.min(255, Math.max(0, (num >> 16) + amount));
+        const g = Math.min(255, Math.max(0, ((num >> 8) & 0x00FF) + amount));
+        const b = Math.min(255, Math.max(0, (num & 0x0000FF) + amount));
+        return `rgb(${r}, ${g}, ${b})`;
+      }
+
+      function project(x, y, z) {
+        const isoX = (x * Math.cos(Math.PI / 6) - y * Math.sin(Math.PI / 6)) * 1.15;
+        const isoY = (x * Math.sin(Math.PI / 6) + y * Math.cos(Math.PI / 6)) * 1.15;
+        return {
+          x: canvas.width / 2 + (isoX - isoY) * 13,
+          y: canvas.height * 0.62 - (isoY + isoX) * 6 + z * 1.1
+        };
+      }
+
+      function getCorners(part) {
+        const { x, y, z, w, h, d } = part;
+        const hw = w / 2;
+        const hh = h / 2;
+        const hd = d / 2;
+        const corners = [
+          [-hw, -hd, -hh], [hw, -hd, -hh], [hw, hd, -hh], [-hw, hd, -hh],
+          [-hw, -hd, hh], [hw, -hd, hh], [hw, hd, hh], [-hw, hd, hh]
+        ].map(([cx, cy, cz]) => {
+          const angle = part.rotation * Math.PI / 180;
+          const px = cx * Math.cos(angle) - cy * Math.sin(angle) + x;
+          const py = cx * Math.sin(angle) + cy * Math.cos(angle) + y;
+          return { x: px, y: py, z: cz + z };
+        });
+        return corners;
+      }
+
+      function drawCuboid(part) {
+        const corners = getCorners(part);
+        const projected = corners.map(p => project(p.x, p.y, p.z));
+
+        const p = [
+          { face: [0, 1, 2, 3], color: shade(part.color, 18) },
+          { face: [3, 2, 6, 7], color: shade(part.color, -8) },
+          { face: [0, 1, 5, 4], color: shade(part.color, 8) },
+          { face: [1, 2, 6, 5], color: shade(part.color, 22) },
+          { face: [4, 5, 6, 7], color: shade(part.color, -12) },
+          { face: [0, 3, 7, 4], color: shade(part.color, 2) }
+        ];
+
+        const visible = p.map(face => ({
+          ...face,
+          avg: face.face.reduce((a, i) => a + corners[i].z, 0) / face.face.length
+        })).sort((a, b) => b.avg - a.avg);
+
+        visible.forEach(face => {
+          ctx.beginPath();
+          ctx.moveTo(projected[face.face[0]].x, projected[face.face[0]].y);
+          for (let i = 1; i < face.face.length; i++) {
+            ctx.lineTo(projected[face.face[i]].x, projected[face.face[i]].y);
+          }
+          ctx.closePath();
+          ctx.fillStyle = face.color;
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(25, 36, 42, 0.2)';
+          ctx.lineWidth = part.id === parts[activePart]?.id ? 2.2 : 1;
+          ctx.stroke();
+        });
+
+        const selected = part.id === parts[activePart]?.id;
+        if (selected) {
+          const outline = [0, 1, 2, 3, 7, 6, 5, 4];
+          ctx.beginPath();
+          ctx.moveTo(projected[outline[0]].x, projected[outline[0]].y);
+          for (let i = 1; i < outline.length; i++) {
+            ctx.lineTo(projected[outline[i]].x, projected[outline[i]].y);
+          }
+          ctx.closePath();
+          ctx.strokeStyle = '#1d74f1';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([8, 5]);
+          ctx.stroke();
+          ctx.setLineDash([]);
+        }
+      }
+
+      function renderGrid() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#edf4f8';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (let x = -200; x <= 200; x += 20) {
+          const a = project(x, -200, 0);
+          const b = project(x, 200, 0);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = 'rgba(125, 143, 154, 0.25)';
+          ctx.stroke();
+        }
+
+        for (let y = -200; y <= 200; y += 20) {
+          const a = project(-200, y, 0);
+          const b = project(200, y, 0);
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.strokeStyle = 'rgba(125, 143, 154, 0.22)';
+          ctx.stroke();
+        }
+
+        const ground = project(-180, -180, 0);
+        const ground2 = project(180, 180, 0);
+        ctx.fillStyle = 'rgba(255,255,255,0.36)';
+        ctx.fillRect(ground.x, ground.y, ground2.x - ground.x, ground2.y - ground.y);
+      }
+
+      function render() {
+        renderGrid();
+        parts.forEach(part => drawCuboid(part));
+      }
+
+      function pointerToWorld(event) {
+        const rect = canvas.getBoundingClientRect();
+        const px = ((event.clientX - rect.left) / rect.width) * canvas.width;
+        const py = ((event.clientY - rect.top) / rect.height) * canvas.height;
+        return { x: px, y: py };
+      }
+
+      canvas.addEventListener('pointerdown', (event) => {
+        const p = pointerToWorld(event);
+
+        let hit = -1;
+        for (let i = parts.length - 1; i >= 0; i--) {
+          const corners = getCorners(parts[i]);
+          const points = corners.map(c => project(c.x, c.y, c.z));
+          const poly = points.map(pt => ({ x: pt.x, y: pt.y }));
+
+          let inside = false;
+          for (let j = 0, k = poly.length - 1; j < poly.length; k = j++) {
+            const intersect = ((poly[j].y > p.y) !== (poly[k].y > p.y)) &&
+              (p.x < (poly[k].x - poly[j].x) * (p.y - poly[j].y) / (poly[k].y - poly[j].y + 0.000001) + poly[j].x);
+            if (intersect) inside = !inside;
+          }
+
+          if (inside) {
+            hit = i;
+            break;
+          }
+        }
+
+        if (hit >= 0) {
+          activePart = hit;
+          drag = { partIndex: hit, startX: p.x, startY: p.y, originX: parts[hit].x, originY: parts[hit].y };
+          updateInspector();
+        }
+      });
+
+      canvas.addEventListener('pointermove', (event) => {
+        if (!drag) return;
+        const p = pointerToWorld(event);
+        const dx = (p.x - drag.startX) / 13;
+        const dy = (p.y - drag.startY) / 13;
+        const part = parts[drag.partIndex];
+        part.x = drag.originX + dx;
+        part.y = drag.originY - dy;
+        render();
+      });
+
+      canvas.addEventListener('pointerup', () => { drag = null; });
+      canvas.addEventListener('pointerleave', () => { drag = null; });
+
+      window.addEventListener('resize', () => {
+        const rect = canvas.getBoundingClientRect();
+        canvas.width = rect.width * devicePixelRatio;
+        canvas.height = rect.height * devicePixelRatio;
+        ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+        render();
+      });
+
+      function initCanvasSize() {
+        const rect = canvas.getBoundingClientRect();
+        const ratio = window.devicePixelRatio || 1;
+        canvas.width = rect.width * ratio;
+        canvas.height = rect.height * ratio;
+      }
+
+      initCanvasSize();
+      updateInspector();
+      render();
+      setInterval(() => {
+        const part = parts[2];
+        if (part) {
+          part.rotation += 0.8;
+          render();
+        }
+      }, 60);
+    </script>
+  </body>
 </html>
